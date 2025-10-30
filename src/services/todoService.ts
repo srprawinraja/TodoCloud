@@ -8,8 +8,10 @@ export const addTodo = async (name: string):Promise<Todo[]> => {
     if (name.length >= 1) {
       const newTodo: Todo = {
         id: uuid.v4(),
+        userId:"123",
         todoName: name,
         todoStatus: false,
+        createdAt:Date.now.toString()
       };
       await addTodoFromStorage(newTodo);
     }
