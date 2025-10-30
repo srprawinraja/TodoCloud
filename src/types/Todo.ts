@@ -1,7 +1,9 @@
 export type Todo = {
   id: string;
+  userId: string;
   todoName: string;
   todoStatus: boolean;
+  createdAt:string
 };
 
 export type TodoProps = {
