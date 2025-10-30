@@ -6,14 +6,25 @@ import SignInScreen from '../screens/SignInScreen/index';
 import VerifyScreen from '../screens/VerifyScreen/index';
 import { JSX } from 'react';
 import TestScreen from '../screens/TestScreen';
+import { useAuth } from '@clerk/clerk-expo'
 
 
 
-const Stack:any = createNativeStackNavigator();
 
 export default function AppNavigator() {
+  const Stack:any = createNativeStackNavigator();
+const { isSignedIn, isLoaded } = useAuth()
+  const getIntialScreen = ()=>{
+    if (!isLoaded || !isSignedIn) {
+        return
+    }
+    if(isSignedIn){
+      return "Todo"
+    } 
+    return "SignIn"
+  }
   return (
-    <Stack.Navigator initialRouteName="SignIn" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName={getIntialScreen()} screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Todo" component={TodoScreen} />
       <Stack.Screen name="SignIn" component={SignInScreen} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />
