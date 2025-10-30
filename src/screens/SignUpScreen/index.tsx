@@ -1,21 +1,45 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ToastAndroid } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import styles from "./styleSheet.style";
+import { useSignUp } from '@clerk/clerk-expo'
+
 
 export default function SignUpScreen({navigation}) {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { signUp, isLoaded, setActive } = useSignUp()
 
-  const handleSendOTP = () => {
-    // TODO: Add your OTP send logic (e.g., via Clerk or backend)
-    console.log('Send OTP to:', email);
+  const handleSignup = async () => {
+  if (!isLoaded || !signUp) {
+        return
+      }
+    try {
+      await signUp.create({
+        emailAddress: email,
+        password: password,
+      });
+
+      // Send OTP to email
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+
+      ToastAndroid.show("OTP sent to your email!", ToastAndroid.LONG);
+      navigation.replace('Verify')
+    } catch (err) {
+      console.error(JSON.stringify(err, null, 2));
+      try{
+          ToastAndroid.show(err.errors[0].longMessage, ToastAndroid.LONG);  
+      } catch(err){
+          ToastAndroid.show("Something went wrong!", ToastAndroid.LONG);  
+      }
+      console.error(JSON.stringify(err, null, 2))    }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create Account ✨</Text>
-      <Text style={styles.subtitle}>Enter your email to receive an OTP</Text>
+      <Text style={styles.subtitle}>Enter your email and password to receive an OTP</Text>
 
       <TextInput
         placeholder="Email address"
@@ -25,8 +49,16 @@ export default function SignUpScreen({navigation}) {
         keyboardType="email-address"
         autoCapitalize="none"
       />
+      <TextInput
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        style={styles.input}
+        keyboardType="visible-password"
+        autoCapitalize="none"
+      />
 
-      <TouchableOpacity style={styles.button} onPress={handleSendOTP}>
+      <TouchableOpacity style={styles.button} onPress={handleSignup}>
         <Text style={styles.buttonText}>Send OTP</Text>
       </TouchableOpacity>
 

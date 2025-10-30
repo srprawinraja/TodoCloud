@@ -1,16 +1,43 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ToastAndroid } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import styles from "./styleSheet.style";
+import { useSignIn } from '@clerk/clerk-expo'
+
 
 export default function SignIn({navigation}) {
+  const { signIn, isLoaded, setActive } = useSignIn()
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+    const handleSignIn = async () => {
+    try {
+        if (!isLoaded || !setActive) return
+        const signInAttempt = await signIn.create({
+          identifier: email,
+          password,
+        })
 
-  const handleSignIn = () => {
-    navigation.replace('Todo')
-  };
+        if (signInAttempt.status === 'complete') {
+          await setActive({
+            session: signInAttempt.createdSessionId,
+          })
+          navigation.replace('Todo')
+        } else {
+          ToastAndroid.show(signInAttempt.status, ToastAndroid.LONG);  
+          console.error(JSON.stringify(signInAttempt, null, 2))
+        }
+      } catch (err) {
+        try{
+          ToastAndroid.show(err.errors[0].longMessage, ToastAndroid.LONG);  
+        } catch(err){
+          ToastAndroid.show("Something went wrong!", ToastAndroid.LONG);  
+        }
+        console.error(JSON.stringify(err, null, 2))
+      }
+    }
+  
 
   return (
     <View style={styles.container}>
