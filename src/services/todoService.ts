@@ -2,16 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import uuid from "react-native-uuid";
 import {Todo} from "../types/Todo";
 import { addTodoFromStorage, getTodoFromStorage, updateTodoFromStorage, deleteTodoFromStorage, getAllTodoFromStorage } from "../utils/asyncStorage";
+import { useUser } from '@clerk/clerk-react';
 
 
-export const addTodo = async (name: string):Promise<Todo[]> => {
+export const addTodo = async (id:string, userId:string, name: string, createdAt:string):Promise<Todo[]> => {
+
     if (name.length >= 1) {
       const newTodo: Todo = {
-        id: uuid.v4(),
-        userId:"123",
+        id: id,
+        userId:userId,
         todoName: name,
         todoStatus: false,
-        createdAt:Date.now.toString()
+        createdAt:createdAt
       };
       await addTodoFromStorage(newTodo);
     }

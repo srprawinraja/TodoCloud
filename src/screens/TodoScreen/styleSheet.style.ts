@@ -26,6 +26,10 @@ export default StyleSheet.create({
     width: 70,
     height: 70,
   },
+  tinyLogOutUi: {
+    width: 50,
+    height: 50,
+  },
   topBarUi: { flexDirection: "row", alignItems: "center", marginLeft: 10 },
   inputUi: {
     backgroundColor: "#CDC9CA",
