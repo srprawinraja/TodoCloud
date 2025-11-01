@@ -58,7 +58,6 @@ export default function SignIn({navigation}) {
         value={password}
         onChangeText={setPassword}
         style={styles.input}
-        secureTextEntry
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSignIn}>

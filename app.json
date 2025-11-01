@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "Todo",
-    "slug": "Todo",
+    "name": "TodoCloud",
+    "slug": "todoCloud",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/app-logo.png",
+    "icon": "./assets/images/app-logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./src/assets/images/splash-icon.png",
+      "image": "./assets/images/adaptive-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,13 +17,22 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/app-logo.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.srprawinraja.TodoCloud"
     },
     "web": {
       "favicon": "./src/assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-web-browser"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b8946471-1c47-4ad5-9361-005d371f973e"
+      }
     }
   }
 }
