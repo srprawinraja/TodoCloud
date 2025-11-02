@@ -12,23 +12,22 @@ import {
 import styles from "./styleSheet.style";
 import TodoComponent from "../../components/TodoComponent";
 import { useEffect, useState } from "react";
-import { addTodo, changeStatusTodo, deleteTodo, getAllTodos } from "../../services/todoService";
+// import { addTodo, changeStatusTodo, deleteTodo, getAllTodos } from "../../storage/todos";
+import {getAllTodoFromDb, addTodoFromDb, deleteTodoFromDb, changeStatusTodoFromDb} from "../../api/todos";
 import {Todo} from "../../types/Todo";
-import { getAllTodoFromStorage } from "../../utils/asyncStorage";
 import { useClerk } from '@clerk/clerk-expo'
 import { Alert } from 'react-native';
 import { BackHandler } from 'react-native';
-import { useUser } from '@clerk/clerk-react';
 import uuid from "react-native-uuid";
-
-
+import { useAuth, useUser } from '@clerk/clerk-expo'
+import { changeStatusTodo } from "../../storage/todos";
 export default function TodoScreen({navigation}) {
   const [inpTodo, onChangeInputTodo] = useState("");
-   const [todoList, setTodoList] = useState<Todo[]>([]);
+  const [todoList, setTodoList] = useState<Todo[]>([]);
   const { signOut } = useClerk()
   const { isLoaded, isSignedIn, user } = useUser();
-
- 
+  const { getToken } = useAuth()
+  const userId = user.id;
   useEffect(() => {
     loadTodos();
   }, []);
@@ -48,32 +47,29 @@ export default function TodoScreen({navigation}) {
   }
 
   const loadTodos = async () => {
-    const loaded = await getAllTodos();
+    const loaded = await getAllTodoFromDb(userId);
     setTodoList(loaded);
   };
   const handleDelete = async (id: string) => {
-    const updated = await deleteTodo(id);
+    const updated = await deleteTodoFromDb(id, userId);
     setTodoList(updated)
   };
   const handleAdd = async (name: string) => {
     try{
-      console.log(user, isLoaded, isSignedIn);
-      const userId = user.id;
       const id = uuid.v4()
-      const createdAt = Date.now.toString()
-      console.log(id, userId, name, createdAt);
-      const updated = await addTodo(id, userId, name, createdAt);
-      console.log(updated);
+      const createdAt = Date.now().toString()
+      const updated = await addTodoFromDb(id, userId, name, createdAt);
       setTodoList(updated)
-      console.log(todoList);
     } catch(err){
+      console.log("error", err)
       console.log(err.message);
     }
   };
   const handleUpdate = async (id:string) => {
-    const updated = await changeStatusTodo(id);;
+    const updated = await changeStatusTodoFromDb(id, userId);
     setTodoList(updated);
   };
+
   useEffect(() => {
       const backAction = () => {
         Alert.alert('Hold on!', 'Are you sure you want to go back?', [
