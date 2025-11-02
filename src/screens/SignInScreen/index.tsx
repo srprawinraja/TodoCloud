@@ -8,7 +8,6 @@ import { useSignIn } from '@clerk/clerk-expo'
 
 export default function SignIn({navigation}) {
   const { signIn, isLoaded, setActive } = useSignIn()
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
     const handleSignIn = async () => {
